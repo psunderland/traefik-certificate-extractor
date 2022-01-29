@@ -4,9 +4,23 @@ import errno
 import time
 import json
 import glob
+import datetime
 from base64 import b64decode
 
 class Handler():
+
+    def checkforchange(self, file):
+        try:
+            mtime = os.path.getmtime(file)
+        except OSError:
+            mtime = 0
+        if mtime != 0:
+            check_last_modified_date = datetime.datetime.fromtimestamp(mtime)
+            if check_last_modified_date != self._base_last_modified_date:
+                # File change detected, extract the certificates from the changed file
+                print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': Traefik certificates json file change detected, extracting certificates...')
+                self._base_last_modified_date = check_last_modified_date
+                self.handle_file(file)
 
     def handle_file(self, file):
         # Read JSON file
@@ -116,8 +130,16 @@ if __name__ == "__main__":
         for file in files:
             print('Certificate storage found (' + os.path.basename(file) + ')')
             event_handler.handle_file(file)
+        # Establish the base_last_modified_date
+        try:
+            mtime = os.path.getmtime(file)
+        except OSError:
+            mtime = 0
+        base_last_modified_date = datetime.datetime.fromtimestamp(mtime)
+        event_handler._base_last_modified_date = base_last_modified_date
     except Exception as e:
         print(e)
 
     while True:
+        event_handler.checkforchange(file)
         time.sleep(1)
