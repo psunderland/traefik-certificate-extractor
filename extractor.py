@@ -29,32 +29,16 @@ class Handler():
 
         data = jsondata[list(jsondata.keys())[0]]
 
-
-        # Determine ACME version
-        try:
-            acme_version = 2 if 'acme-v02' in data['Account']['Registration']['uri'] else 1
-        except TypeError:
-            if 'DomainsCertificate' in data:
-                acme_version = 1
-            else:
-                acme_version = 2
-
         # Get the certificates
         certs = data['Certificates']
         print(str(len(certs)) + ' certificates found')
 
         # Loop over all certificates
         for c in certs:
-            if acme_version == 1:
-                name = c['Certificate']['Domain']
-                privatekey = c['Certificate']['PrivateKey']
-                fullchain = c['Certificate']['Certificate']
-                sans = c['Domains']['SANs']
-            elif acme_version == 2:
-                name = c['domain']['main']
-                privatekey = c['key']
-                fullchain = c['certificate']
-                sans = c['domain']['sans']
+            name = c['domain']['main']
+            privatekey = c['key']
+            fullchain = c['certificate']
+            sans = c['domain']['sans']
 
             # Decode private key, certificate and chain
             privatekey = b64decode(privatekey).decode('utf-8')
