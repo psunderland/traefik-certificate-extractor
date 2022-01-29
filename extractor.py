@@ -24,7 +24,11 @@ class Handler():
 
     def handle_file(self, file):
         # Read JSON file
-        data = json.loads(open(file).read())
+        jsondata = json.loads(open(file).read())
+        # Skip the top level resolvername key in the json
+
+        data = jsondata[list(jsondata.keys())[0]]
+
 
         # Determine ACME version
         try:
@@ -35,13 +39,9 @@ class Handler():
             else:
                 acme_version = 2
 
-        # Find certificates
-        if acme_version == 1:
-            certs = data['DomainsCertificate']['Certs']
-        elif acme_version == 2:
-            certs = data['Certificates']
-
-        print('Certificate storage contains ' + str(len(certs)) + ' certificates')
+        # Get the certificates
+        certs = data['Certificates']
+        print(str(len(certs)) + ' certificates found')
 
         # Loop over all certificates
         for c in certs:
@@ -51,10 +51,10 @@ class Handler():
                 fullchain = c['Certificate']['Certificate']
                 sans = c['Domains']['SANs']
             elif acme_version == 2:
-                name = c['Domain']['Main']
-                privatekey = c['Key']
-                fullchain = c['Certificate']
-                sans = c['Domain']['SANs']
+                name = c['domain']['main']
+                privatekey = c['key']
+                fullchain = c['certificate']
+                sans = c['domain']['sans']
 
             # Decode private key, certificate and chain
             privatekey = b64decode(privatekey).decode('utf-8')
@@ -103,7 +103,7 @@ class Handler():
                     with open(directory + name + '.chain.pem', 'w') as f:
                         f.write(chain)
 
-            print('Extracted certificate for: ' + name + (', ' + ', '.join(sans) if sans else ''))
+            print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ': Extracted certificate for: ' + name + (', ' + ', '.join(sans) if sans else ''))
 
 if __name__ == "__main__":
     # Determine path to watch
