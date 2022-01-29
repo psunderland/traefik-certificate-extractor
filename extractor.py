@@ -109,11 +109,11 @@ if __name__ == "__main__":
     event_handler = Handler()
 
     # Extract certificates from current file(s) before watching
-    files = glob.glob(os.path.join(path, '*.json'))
+    files = glob.glob(os.path.join(path, 'acme.json'))
     try:
-        for file in files:
-            print('Certificate storage found (' + os.path.basename(file) + ')')
-            event_handler.handle_file(file)
+        file = files[0]
+        print('Certificate storage found (' + os.path.basename(file) + ')')
+        event_handler.handle_file(file)
         # Establish the base_last_modified_date
         try:
             mtime = os.path.getmtime(file)
