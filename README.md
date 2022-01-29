@@ -22,7 +22,7 @@ Default input directory is `./data`. The output directories are `./certs` and `.
 There is a Docker image available for this tool: [patricksunderland/traefikcertificateextractor](https://hub.docker.com/r/patricksunderland/traefikcertificateextractor/).
 Example run:
 ```
-docker run --name extractor -d -v /srv/traefik/acme:/app/data -v /srv/extractor/certs:/app/certs patricksunderland/traefik-certificate-extractor
+docker run --name extractor -d -v /srv/traefik/acme:/app/data -v /srv/extractor/certs:/app/certs -v /srv/extractor/certs_flat:/app/certs_flat patricksunderland/traefikcertificateextractor
 ```
 
 ## Output
