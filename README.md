@@ -19,7 +19,7 @@ python3 extractor.py [directory]
 Default input directory is `./data`. The output directories are `./certs` and `./certs_flat`. The certificate extractor will extract certificates from `acme.json` JSON file in the input directory, so make sure this is the same as Traefik's ACME directory.
 
 ## Docker
-There is a Docker image available for this tool: [patricksunderland/traefikcertificateextractor:2.5.6](https://hub.docker.com/r/patricksunderland/traefikcertificateextractor:2.5.6/).
+There is a Docker image available for this tool: [patricksunderland/traefikcertificateextractor](https://hub.docker.com/r/patricksunderland/traefikcertificateextractor/).
 Example run:
 ```
 docker run --name extractor -d -v /srv/traefik/acme:/app/data -v /srv/extractor/certs:/app/certs patricksunderland/traefik-certificate-extractor
