@@ -5,21 +5,8 @@ import time
 import json
 import glob
 from base64 import b64decode
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 
-class Handler(FileSystemEventHandler):
-    def on_created(self, event):
-        self.handle_event(event)
-
-    def on_modified(self, event):
-        self.handle_event(event)
-
-    def handle_event(self, event):
-        # Check if it's a JSON file
-        if not event.is_directory and event.src_path.endswith('.json'):
-            print('Certificate storage changed (' + os.path.basename(event.src_path) + ')')
-            self.handle_file(event.src_path)
+class Handler():
 
     def handle_file(self, file):
         # Read JSON file
@@ -120,9 +107,8 @@ if __name__ == "__main__":
         if error.errno != errno.EEXIST:
             raise
 
-    # Create event handler and observer
+    # Create event handler
     event_handler = Handler()
-    observer = Observer()
 
     # Extract certificates from current file(s) before watching
     files = glob.glob(os.path.join(path, '*.json'))
@@ -133,14 +119,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(e)
 
-    # Register the directory to watch
-    observer.schedule(event_handler, path)
-
-    # Main loop to watch the directory
-    observer.start()
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
+    while True:
+        time.sleep(1)
